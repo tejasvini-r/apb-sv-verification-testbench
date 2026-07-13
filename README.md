@@ -135,3 +135,4 @@ Fix: the reference model's read-check for register 0 now always masks bit[31]
 to the expected value 0, regardless of what was last written. Re-verified:
 200/200 pass, 8/8 coverage bins hit.
 
+<img width="1119" height="653" alt="modelsim_transcript2" src="https://github.com/user-attachments/assets/fc1cdd24-6d12-4229-9bd3-cda9d5a7a65c" />
