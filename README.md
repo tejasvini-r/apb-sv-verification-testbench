@@ -105,7 +105,7 @@ all three. The constrained-random `target_special_reg` knob in
 `apb_transaction.sv` biases toward these cases so they show up reliably
 within ~200 transactions.
 
-## Bug found and fixed during bring-up (good interview talking point)
+## Bug found and fixed during bring-up 
 
 The first ModelSim run using `tb_top_iverilog.sv` produced:
 
