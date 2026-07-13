@@ -1,0 +1,60 @@
+vlog -sv apb_slave_dut.sv tb_top_iverilog.sv
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:28:27 on Jul 13,2026
+# vlog -reportprogress 300 -sv apb_slave_dut.sv tb_top_iverilog.sv 
+# -- Compiling module apb_slave_dut
+# 
+# Top level modules:
+# 	apb_slave_dut
+# End time: 20:28:27 on Jul 13,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+vsim -c tb_top_iverilog
+# vsim -c tb_top_iverilog 
+# Start time: 20:28:37 on Jul 13,2026
+# Loading sv_std.std
+# Loading work.tb_top_iverilog
+# Loading work.apb_slave_dut
+quit -sim
+# End time: 20:30:27 on Jul 13,2026, Elapsed time: 0:01:50
+# Errors: 0, Warnings: 0
+vlog -sv apb_slave_dut.sv tb_top_iverilog.sv
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 20:30:43 on Jul 13,2026
+# vlog -reportprogress 300 -sv apb_slave_dut.sv tb_top_iverilog.sv 
+# -- Compiling module apb_slave_dut
+# -- Compiling module tb_top_iverilog
+# 
+# Top level modules:
+# 	tb_top_iverilog
+# End time: 20:30:43 on Jul 13,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+vsim -c tb_top_iverilog
+# vsim -c tb_top_iverilog 
+# Start time: 20:30:58 on Jul 13,2026
+# Loading sv_std.std
+# Loading work.tb_top_iverilog
+# Loading work.apb_slave_dut
+run -all
+# =========================================
+#  APB Layered TB (Icarus-compatible) START
+# =========================================
+# =========================================
+#  SCOREBOARD REPORT: PASS=200 FAIL=0 TOTAL=200
+# =========================================
+#  FUNCTIONAL COVERAGE (manual bins)
+#    reg0 hits          : 23  [HIT]
+#    normal_regs hits   : 119  [HIT]
+#    readonly_reg hits  : 29  [HIT]
+#    out_of_range hits  : 29  [HIT]
+#    write ops          : 97  [HIT]
+#    read ops           : 103  [HIT]
+#    selfclear bit set  : 6  [HIT]
+#    PSLVERR observed   : 29  [HIT]
+# =========================================
+#  COVERAGE: 8 / 8 bins hit (100.0%)
+# =========================================
+#  RESULT: ALL TESTS PASSED
+# =========================================
+# ** Note: $finish    : tb_top_iverilog.sv(276)
+#    Time: 6175 ps  Iteration: 1  Instance: /tb_top_iverilog
+

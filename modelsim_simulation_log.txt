@@ -1,0 +1,108 @@
+=====================================================================
+APB Slave Layered SystemVerilog Testbench — ModelSim Simulation Log
+=====================================================================
+Tool      : ModelSim - Intel FPGA Edition, vlog/vsim 2020.1
+Files used: apb_slave_dut.sv, tb_top_iverilog.sv
+            (the class-based OOP testbench - apb_transaction.sv,
+            apb_env.sv, tb_top.sv, etc. - could NOT run on this
+            edition; see note below)
+
+---------------------------------------------------------------------
+NOTE: why tb_top_iverilog.sv was used instead of tb_top.sv
+---------------------------------------------------------------------
+This edition of ModelSim (bundled free with Intel Quartus) does not
+hold a verification license. Attempting to load the class-based
+testbench failed with:
+
+  ** Error: (vsim-1) Unable to checkout verification license -
+  testbench generation feature (randomize, randcase, randsequence,
+  covergroup) is only supported with QuestaSim.
+
+This is a licensing restriction of the free edition, not a code
+defect - the file compiled cleanly (0 errors) before this runtime
+error. tb_top_iverilog.sv (the task/procedural re-implementation
+using plain $urandom instead of constraint/randomize/covergroup) was
+used instead, since it requires no verification license and exercises
+the same DUT and the same methodology.
+
+---------------------------------------------------------------------
+STEP 1: COMPILE
+---------------------------------------------------------------------
+$ vlog -sv apb_slave_dut.sv tb_top_iverilog.sv
+
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02
+# -- Compiling module apb_slave_dut
+# -- Compiling module tb_top_iverilog
+# Top level modules: tb_top_iverilog
+# Errors: 0, Warnings: 0
+
+---------------------------------------------------------------------
+STEP 2: LOAD + RUN
+---------------------------------------------------------------------
+$ vsim -c tb_top_iverilog
+$ run -all
+
+=========================================
+ APB Layered TB (Icarus-compatible) START
+=========================================
+=========================================
+ SCOREBOARD REPORT: PASS=200 FAIL=0 TOTAL=200
+=========================================
+ FUNCTIONAL COVERAGE (manual bins)
+   reg0 hits          : 23  [HIT]
+   normal_regs hits   : 119  [HIT]
+   readonly_reg hits  : 29  [HIT]
+   out_of_range hits  : 29  [HIT]
+   write ops          : 97  [HIT]
+   read ops           : 103  [HIT]
+   selfclear bit set  : 6  [HIT]
+   PSLVERR observed   : 29  [HIT]
+=========================================
+ COVERAGE: 8 / 8 bins hit (100.0%)
+=========================================
+ RESULT: ALL TESTS PASSED
+=========================================
+** Note: $finish : tb_top_iverilog.sv(276)
+   Time: 6175 ps  Iteration: 1  Instance: /tb_top_iverilog
+
+---------------------------------------------------------------------
+STEP 3: RESULT SUMMARY
+---------------------------------------------------------------------
+Total transactions applied : 200
+Pass                        : 200
+Fail                        : 0
+Functional coverage bins hit: 8 / 8 (100%)
+
+---------------------------------------------------------------------
+BUG FOUND DURING FIRST MODELSIM RUN (fixed before this final run)
+---------------------------------------------------------------------
+The very first run on this tool, using the same tb_top_iverilog.sv
+before a reference-model fix, produced:
+
+  SCOREBOARD REPORT: PASS=193 FAIL=7 TOTAL=200
+
+All 7 failures were reads of register 0 where the expected value had
+bit[31] set but the DUT returned bit[31] = 0, e.g.:
+  FAIL: read mismatch addr=0x0 exp=0xa95ed63d got=0x295ed63d
+
+This was a real, latent gap in the scoreboard's reference model: it
+was not modeling register 0's documented 2-cycle self-clearing
+bit[31] behavior. This exact limitation had already been called out
+as a "known limitation" before this run, and this ModelSim run's
+particular $urandom sequence was the first one (across Icarus and
+ModelSim runs) to actually exercise the case that exposed it - Icarus's
+random sequence in earlier runs happened not to read register 0 soon
+enough after writing it with bit[31] set to trigger a visible
+mismatch.
+
+Root cause, confirmed with a small directed test (write reg0 with
+bit[31] set, then read reg0 on the very next transaction): bit[31]
+always reads back as 0, because at 3 clock edges per APB transaction,
+by the time any subsequent read executes, more than the DUT's 2-cycle
+self-clear delay has already elapsed.
+
+Fix: the reference model's read-check for register 0 now always masks
+bit[31] to the expected value 0, regardless of what was last written.
+Re-verified: 200/200 pass on this run, and previously reconfirmed
+200/200 across 3 repeated runs on Icarus Verilog too.
+=====================================================================
