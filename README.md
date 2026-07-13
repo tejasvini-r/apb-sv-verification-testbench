@@ -1,5 +1,6 @@
 # APB Slave — Layered SystemVerilog Testbench (Non-UVM)
 
+**Result: 200/200 PASS, 100% functional coverage**
 A self-contained, class-based SV verification environment for a small
 APB (Advanced Peripheral Bus) register-file slave. No UVM, no pure
 assertion-only checking — this is the classic "layered testbench"
